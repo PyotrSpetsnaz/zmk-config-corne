@@ -19,8 +19,9 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |          
-          FILE_PATH="./artifact/firmware"
-          ls ./artifact/firmware
+          zip -r ./artifact/firmware.zip ./artifact/firmware
+          FILE_PATH="./artifact/firmware.zip"
+          ls ./artifact
           CAPTION="Build completed with status: ${{ needs.build.outcome }}."
 
           RESPONSE=`curl \
