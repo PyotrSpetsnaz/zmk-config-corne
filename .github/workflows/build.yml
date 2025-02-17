@@ -18,20 +18,20 @@ jobs:
         env: 
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          if [ -e "./artifact/firmware" ]; then
-            echo "File exists."
-          else
-            echo "File does not exist." && exit 1
-          fi
-          
+        run: |          
           FILE_PATH="./artifact/firmware.zip"
+          CAPTION="Build completed with status: ${{ needs.build.outcome }}."
 
-          BUILD_STATUS="${{ needs.build.outcome }}"
-          CAPTION="Build completed with status: $BUILD_STATUS."
-          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
-               -F chat_id="${TELEGRAM_CHAT_ID}" \
-               -F document=@"${FILE_PATH}" \
-               -F caption="${CAPTION}"
-        
-          
+          RESPONSE=$(curl -s -w "%{http_code}" -o response_body.txt -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
+             -F chat_id="${TELEGRAM_CHAT_ID}" \
+             -F document=@"${FILE_PATH}" \
+             -F caption="${CAPTION}")
+
+            # Check the HTTP response code
+            if [ "$RESPONSE" -ne 200 ]; then
+              echo "Error: Failed to send notification. HTTP Response Code: $RESPONSE"
+              echo "Response Body: $(cat response_body.txt)"
+            exit 1
+          else
+            echo "Telegram notification sent successfully."
+          fi
