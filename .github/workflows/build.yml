@@ -22,7 +22,7 @@ jobs:
           FILE_PATH="./artifact/firmware.zip"
           CAPTION="Build completed with status: ${{ needs.build.outcome }}."
 
-          RESPONSE=`curl 
+          RESPONSE=`curl \
               -s \
               -w '%{http_code}' \
               -o response_body.txt \
