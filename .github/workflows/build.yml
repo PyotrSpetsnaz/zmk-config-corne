@@ -21,8 +21,6 @@ jobs:
         run: |          
           zip -r ./artifact/firmware.zip ./artifact/firmware
           FILE_PATH="./artifact/firmware.zip"
-          ls ./artifact
-          CAPTION="Build completed with status: ${{ needs.build.outcome }}."
 
           RESPONSE=`curl \
               -s \
@@ -31,13 +29,4 @@ jobs:
               -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
               -F chat_id="${TELEGRAM_CHAT_ID}" \
               -F document=@"${FILE_PATH}" \
-              -F caption="${CAPTION}"`
-
-          # Check the HTTP response code
-          if [ "$RESPONSE" -ne 200 ]; then
-            echo "Error: Failed to send notification. HTTP Response Code: $RESPONSE"
-            echo "Response Body: $(cat response_body.txt)"
-            exit 1
-          else
-            echo "Telegram notification sent successfully."
-          fi
+              -F caption="Build completed"`
