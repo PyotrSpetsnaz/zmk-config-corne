@@ -25,12 +25,12 @@ jobs:
           RESPONSE=$(curl -s -w "%{http_code}" -o response_body.txt -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
              -F chat_id="${TELEGRAM_CHAT_ID}" \
              -F document=@"${FILE_PATH}" \
-             -F caption="${CAPTION}")
+             -F caption="${CAPTION}" 2>/dev/null) 
 
-            # Check the HTTP response code
-            if [ "$RESPONSE" -ne 200 ]; then
-              echo "Error: Failed to send notification. HTTP Response Code: $RESPONSE"
-              echo "Response Body: $(cat response_body.txt)"
+          # Check the HTTP response code
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Error: Failed to send notification. HTTP Response Code: $RESPONSE"
+            echo "Response Body: $(cat response_body.txt)"
             exit 1
           else
             echo "Telegram notification sent successfully."
