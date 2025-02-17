@@ -19,9 +19,16 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          if [ -e "./artifact/firmware.zip" ]; then
+            echo "File exists."
+          else
+            echo "File does not exist." && exit 1
+          fi
+          
           FILE_PATH="./artifact/firmware.zip"
 
-          CAPTION="Build completed with status: ${{ needs.build.outcome }}."
+          BUILD_STATUS="${{ needs.build.outcome }}"
+          CAPTION="Build completed with status: $BUILD_STATUS."
           curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
                -F chat_id="${TELEGRAM_CHAT_ID}" \
                -F document=@"${FILE_PATH}" \
