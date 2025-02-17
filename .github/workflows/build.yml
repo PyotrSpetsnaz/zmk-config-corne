@@ -19,6 +19,8 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          ls .
+          ls ./artifact
           if [ -e "./artifact/firmware.zip" ]; then
             echo "File exists."
           else
