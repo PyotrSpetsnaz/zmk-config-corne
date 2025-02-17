@@ -22,11 +22,9 @@ jobs:
           zip -r ./artifact/firmware.zip ./artifact/firmware
           FILE_PATH="./artifact/firmware.zip"
 
-          RESPONSE=`curl \
+          curl \
               -s \
-              -w '%{http_code}' \
-              -o response_body.txt \
               -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
               -F chat_id="${TELEGRAM_CHAT_ID}" \
               -F document=@"${FILE_PATH}" \
-              -F caption="Build completed"`
+              -F caption="Build completed by Pikmin"
