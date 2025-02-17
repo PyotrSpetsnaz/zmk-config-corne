@@ -3,3 +3,28 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+
+  notify:
+    if: always()
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with: 
+          name: build-artifact
+          path: ./artifact
+      - name: Send Telegram Notification with Build File
+        env: 
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          FILE_PATH="./artifact/firmware.zip"
+
+          CAPTION="Build completed with status: ${{ needs.build.outcome }}.
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
+               -F chat_id="${TELEGRAM_CHAT_ID}" \
+               -F document=@"${FILE_PATH}" \
+               -F caption="${CAPTION}"
+        
+          
